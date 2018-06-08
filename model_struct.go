@@ -46,7 +46,11 @@ type ModelStruct struct {
 	StructFields     []*StructField
 	ModelType        reflect.Type
 	defaultTableName string
+<<<<<<< HEAD
 	l                *sync.RWMutex
+=======
+	l                sync.Mutex
+>>>>>>> 31d1ecea108316629ddea1aebf23d5e5626f422e
 }
 
 // TableName get model's table name
