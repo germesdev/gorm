@@ -113,24 +113,24 @@ func (s clickhouse) HasForeignKey(tableName string, foreignKeyName string) bool 
 func (s clickhouse) HasTable(tableName string) bool {
 	var count int
 	currentDatabase, tableName := currentDatabaseAndTable(&s, tableName)
-	s.db.QueryRow("SELECT count(*) FROM system.tables WHERE database = ? AND name = ?", currentDatabase, tableName).Scan(&count)
+	s.db.QueryRow("SELECT count() FROM system.tables WHERE database = ? AND name = ?", currentDatabase, tableName).Scan(&count)
 	return count > 0
 }
 
 func (s clickhouse) HasColumn(tableName string, columnName string) bool {
 	var count int
 	currentDatabase, tableName := currentDatabaseAndTable(&s, tableName)
-	s.db.QueryRow("SELECT count(*) FROM system.columns WHERE database = ? AND table = ? AND name = ?", currentDatabase, tableName, columnName).Scan(&count)
+	s.db.QueryRow("SELECT count() FROM system.columns WHERE database = ? AND table = ? AND name = ?", currentDatabase, tableName, columnName).Scan(&count)
 	return count > 0
 }
 
 func (s clickhouse) ModifyColumn(tableName string, columnName string, typ string) error {
-	_, err := s.db.Exec(fmt.Sprintf("ALTER TABLE %v ALTER COLUMN %v TYPE %v", tableName, columnName, typ))
+	_, err := s.db.Exec(fmt.Sprintf("ALTER TABLE %v MODIFY COLUMN %v %v", tableName, columnName, typ))
 	return err
 }
 
 func (s clickhouse) CurrentDatabase() (name string) {
-	s.db.QueryRow("SELECT DATABASE()").Scan(&name)
+	s.db.QueryRow("SELECT currentDatabse()").Scan(&name)
 	return
 }
 
