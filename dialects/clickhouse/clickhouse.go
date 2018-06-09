@@ -47,9 +47,15 @@ func (s *clickhouse) DataTypeOf(field *gorm.StructField) string {
 	var dataValue, sqlType, _, additionalType = gorm.ParseFieldStructForDialect(field, s)
 
 	if sqlType == "" {
-		switch dataValue.Kind() {
+		typeToCheck := dataValue.Kind()
+
+		if dataValue.Kind() == reflect.Slice {
+			typeToCheck = field.Struct.Type.Elem().Kind()
+		}
+
+		switch typeToCheck {
 		case reflect.Bool:
-			sqlType = "Uint8"
+			sqlType = "UInt8"
 
 		case reflect.Int8:
 			sqlType = "Int8"
@@ -85,6 +91,10 @@ func (s *clickhouse) DataTypeOf(field *gorm.StructField) string {
 			if _, ok := dataValue.Interface().([]byte); ok {
 				sqlType = "String"
 			}
+		}
+
+		if sqlType != "" && dataValue.Kind() == reflect.Slice {
+			sqlType = "Array(" + sqlType + ")"
 		}
 	}
 
@@ -130,7 +140,7 @@ func (s clickhouse) ModifyColumn(tableName string, columnName string, typ string
 }
 
 func (s clickhouse) CurrentDatabase() (name string) {
-	s.db.QueryRow("SELECT currentDatabse()").Scan(&name)
+	s.db.QueryRow("SELECT currentDatabase()").Scan(&name)
 	return
 }
 
