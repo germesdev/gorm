@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
+	_ "github.com/germesdev/clickhouse"
 	"github.com/germesdev/gorm"
-	_ "github.com/kshvakov/clickhouse"
 )
 
 func init() {
