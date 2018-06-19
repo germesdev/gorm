@@ -1239,7 +1239,11 @@ func (scope *Scope) autoMigrate() *Scope {
 			if !scope.Dialect().HasColumn(tableName, field.DBName) {
 				if field.IsNormal {
 					sqlTag := scope.Dialect().DataTypeOf(field)
-					scope.Raw(fmt.Sprintf("ALTER TABLE %v ADD %v %v;", quotedTableName, scope.Quote(field.DBName), sqlTag)).Exec()
+					if scope.Dialect().GetName() == "clickhouse" {
+						scope.Raw(fmt.Sprintf("ALTER TABLE %v ADD COLUMN %v %v;", quotedTableName, scope.Quote(field.DBName), sqlTag)).Exec()
+					} else {
+						scope.Raw(fmt.Sprintf("ALTER TABLE %v ADD %v %v;", quotedTableName, scope.Quote(field.DBName), sqlTag)).Exec()
+					}
 				}
 			}
 			scope.createJoinTable(field)
