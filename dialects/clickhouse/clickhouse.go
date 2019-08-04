@@ -170,6 +170,11 @@ func (clickhouse) DefaultValueStr() string {
 	return "DEFAULT VALUES"
 }
 
+// NormalizeIndexAndColumn returns argument's index name and column name without doing anything
+func (clickhouse) NormalizeIndexAndColumn(indexName, columnName string) (string, string) {
+	return indexName, columnName
+}
+
 // IsByteArrayOrSlice returns true of the reflected value is an array or slice
 func IsByteArrayOrSlice(value reflect.Value) bool {
 	return (value.Kind() == reflect.Array || value.Kind() == reflect.Slice) && value.Type().Elem() == reflect.TypeOf(uint8(0))
